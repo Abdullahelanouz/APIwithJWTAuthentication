@@ -9,6 +9,6 @@ namespace API_with_JWT_Authentication.Models
         [Required, MaxLength(50)]
         public string FirstName { get; set; }
         [Required, MaxLength(50)]
-        public int LastName { get; set; }
+        public string LastName { get; set; }
     }
 }

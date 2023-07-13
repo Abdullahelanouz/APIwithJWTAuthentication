@@ -8,7 +8,7 @@ namespace API_with_JWT_Authentication.Models
         public string FirstName { get; set; }
 
         [Required, StringLength(100)]
-        public int LastName { get; set; }
+        public string LastName { get; set; }
 
         [Required, StringLength(50)]
         public string Username { get; set; }
