@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace API_with_JWT_Authentication.Models
@@ -9,5 +10,10 @@ namespace API_with_JWT_Authentication.Models
         public string FirstName { get; set; }
         [Required, MaxLength(50)]
         public int LastName { get; set; }
+
+        public static implicit operator ApplicationUser(ApplicationUser v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
