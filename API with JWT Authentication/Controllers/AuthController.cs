@@ -61,6 +61,44 @@ namespace API_with_JWT_Authentication.Controllers
             return Ok(model);
         }
 
+
+        [HttpGet("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var result = await _authService.RefreshTokenAsync(refreshToken);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result);
+
+            SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+
+            return Ok(result);
+        }
+
+        [HttpPost("revokeToken")]
+        public async Task<IActionResult> RevokeToken([FromBody] RevokeToken model)
+        {
+            var token = model.Token ?? Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(token))
+                return BadRequest("Token is required!");
+
+            var result = await _authService.RevokeTokenAsync(token);
+
+            if (!result)
+                return BadRequest("Token is invalid!");
+
+            return Ok();
+        }
+
+
+
+
+
+
+
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
         {
             var cookieOptions = new CookieOptions
@@ -74,6 +112,14 @@ namespace API_with_JWT_Authentication.Controllers
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
+
+
+
+
+        
+
     }
+
+
 
 }
