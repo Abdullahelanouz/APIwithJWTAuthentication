@@ -58,7 +58,9 @@ namespace API_with_JWT_Authentication
                     ValidateLifetime = true,
                     ValidIssuer = Configuration["JWT:Issuer"],
                     ValidAudience = Configuration["JWT:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"])),
+                   // ClockSkew = TimeSpan.Zero
+
                 };
             });
             services.AddControllers();
