@@ -2,6 +2,7 @@
 using API_with_JWT_Authentication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace API_with_JWT_Authentication.Controllers
@@ -33,14 +34,16 @@ namespace API_with_JWT_Authentication.Controllers
         [HttpPost("token")]
         public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequestModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var result = await _authService.GetTokenAsync(model);
 
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
+
+            if (!string.IsNullOrEmpty(result.RefreshToken))
+                SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+
+            
             return Ok(result);
         }
 
@@ -56,6 +59,20 @@ namespace API_with_JWT_Authentication.Controllers
                 return BadRequest(result);
 
             return Ok(model);
+        }
+
+        private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = expires.ToLocalTime(),
+                Secure = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.None
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
     }
 
